@@ -40,7 +40,7 @@ def __init__(rocketStorageAddress: address, swapRouterAddress: address, wethAddr
   rethToken = ERC20(rethAddress)
   wethToken = WethInterface(wethAddress)
   swapRouter = swapRouterAddress
-  assert rethToken.approve(swapRouter, MAX_UINT256)
+  assert rethToken.approve(swapRouter, max_value(uint256))
 
 @external
 def setOwner(newOwner: address):
@@ -74,17 +74,17 @@ def sweep(token:ERC20):
 	token.transfer(self.owner, token.balanceOf(self))
 
 @external
-def arb(wethAmount: uint256, minProfit: uint256, swapData: Bytes[MAX_DATA]):
+def arb(ethAmount: uint256, minProfit: uint256, swapData: Bytes[MAX_DATA]):
   rocketDepositPool: RocketDepositPoolInterface = RocketDepositPoolInterface(
     rocketStorage.getAddress(keccak256("contract.addressrocketDepositPool")))
 
-  rocketDepositPool.deposit(value = wethAmount)
+  rocketDepositPool.deposit(value = ethAmount)
   raw_call(swapRouter, swapData)
   assert rethToken.balanceOf(self) == 0, "rETH left over after swap"
   total: uint256 = wethToken.balanceOf(self)
-  assert total >= wethAmount, "not enough to cover lent amount"
-  profit: uint256 = total - wethAmount
+  assert total >= ethAmount, "not enough to cover lent amount"
+  profit: uint256 = total - ethAmount
   assert profit >= minProfit, "not enough profit"
   wethToken.withdraw(total)
   send(msg.sender, profit)
-  log Arbitrage(msg.sender, wethAmount, profit)
+  log Arbitrage(msg.sender, ethAmount, profit)
