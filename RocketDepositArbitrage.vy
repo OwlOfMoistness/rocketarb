@@ -62,8 +62,8 @@ def fund():
 @external
 def defund():
 	bal: uint256 = self.balance
-	assert bal>= 0, "deposit does not exists"
 	prev_funder: address = self.funder
+	assert prev_funder != empty(address)
 	assert msg.sender == prev_funder, "only funder can call"
 	self.funder = empty(address)
 	send(prev_funder, bal)
