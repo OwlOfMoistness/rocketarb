@@ -321,7 +321,8 @@ async function getArbTx(encodedSignedDepositTx, resumedDeposit) {
   const minProfit = gasRefund.mul(signedDepositTx.maxFeePerGas)
   const feeData = getFeeData(signedDepositTx, resumedDeposit)
 
-  const unsignedArbTx = await arbContract.populateTransaction.arb(minProfit, swapData)
+  const unsignedArbTx = options.useV2 ? await arbContract.populateTransaction.arb(minProfit, swapData) :
+                                        await arbContract.populateTransaction.arb(ethAmount, minProfit, swapData)
   unsignedArbTx.type = 2
   unsignedArbTx.chainId = signedDepositTx.chainId
   unsignedArbTx.nonce = signedDepositTx.nonce + 1
