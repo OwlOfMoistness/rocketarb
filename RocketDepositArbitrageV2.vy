@@ -74,11 +74,11 @@ def sweep(token:ERC20):
 	token.transfer(self.owner, token.balanceOf(self))
 
 @external
-def arb(minProfit: uint256, swapData: Bytes[MAX_DATA]):  
+def arb(wethAmount: uint256, minProfit: uint256, swapData: Bytes[MAX_DATA]):
   rocketDepositPool: RocketDepositPoolInterface = RocketDepositPoolInterface(
     rocketStorage.getAddress(keccak256("contract.addressrocketDepositPool")))
 
-  rocketDepositPool.deposit(value = DEPOSIT_VALUE)
+  rocketDepositPool.deposit(value = wethAmount)
   raw_call(swapRouter, swapData)
   assert rethToken.balanceOf(self) == 0, "rETH left over after swap"
   total: uint256 = wethToken.balanceOf(self)
