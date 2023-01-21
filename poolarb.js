@@ -45,7 +45,7 @@ const rocketStorage = new ethers.Contract(
   rocketStorageAddress, ["function getAddress(bytes32 key) view returns (address)"], provider)
 
 const arbContract = new ethers.Contract(
-  arbContractAddress, ["function arb(uint256 wethAmount, uint256 minProfit, bytes swapData) nonpayable"], provider)
+  arbContractAddress, ["function arb(uint256 minProfit, bytes swapData) nonpayable"], provider)
 
 async function run() {
   const rocketNodeDepositAddress = await rocketStorage.getAddress(
@@ -144,8 +144,7 @@ async function run() {
       console.log(`Warning: unexpected to address for swap: ${swap.tx.to}`)
 
     console.log(`arb(${ethAmount}, ${minProfit}, ${swap.tx.data})`)
-    const unsignedArbTx = await arbContract.populateTransaction.arb(
-      ethAmount, minProfit, swap.tx.data)
+    const unsignedArbTx = await arbContract.populateTransaction.arb(minProfit, swap.tx.data)
     unsignedArbTx.chainId = 1
     unsignedArbTx.type = 2
     unsignedArbTx.maxPriorityFeePerGas = feeData.maxPriorityFeePerGas.mul(4)

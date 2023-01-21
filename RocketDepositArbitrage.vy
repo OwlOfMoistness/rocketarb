@@ -56,7 +56,7 @@ def __default__():
 @payable
 def fund():
   assert msg.value == DEPOSIT_VALUE, "incorrect deposit value"
-  assert self.balance == 0, "deposit exists already"
+  assert self.funder == empty(address), "deposit exists already"
   self.funder = msg.sender
 
 @external
@@ -74,7 +74,7 @@ def sweep(token:ERC20):
 	token.transfer(self.owner, token.balanceOf(self))
 
 @external
-def arb(wethAmount: uint256, minProfit: uint256, swapData: Bytes[MAX_DATA]):  
+def arb(minProfit: uint256, swapData: Bytes[MAX_DATA]):  
   rocketDepositPool: RocketDepositPoolInterface = RocketDepositPoolInterface(
     rocketStorage.getAddress(keccak256("contract.addressrocketDepositPool")))
 

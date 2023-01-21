@@ -306,7 +306,7 @@ async function getArbBundleNoFlash(encodedSignedDepositTx, resumedDeposit) {
 async function getArbTx(encodedSignedDepositTx, resumedDeposit) {
   console.log('Creating arb transaction')
 
-  const arbAbi = ["function arb(uint256 wethAmount, uint256 minProfit, bytes swapData) nonpayable"]
+  const arbAbi = ["function arb(uint256 minProfit, bytes swapData) nonpayable"]
   const arbContract = new ethers.Contract(options.arbContract, arbAbi, provider)
 
   const signedDepositTx = ethers.utils.parseTransaction(encodedSignedDepositTx)
@@ -316,7 +316,7 @@ async function getArbTx(encodedSignedDepositTx, resumedDeposit) {
   const minProfit = gasRefund.mul(signedDepositTx.maxFeePerGas)
   const feeData = getFeeData(signedDepositTx, resumedDeposit)
 
-  const unsignedArbTx = await arbContract.populateTransaction.arb(ethAmount, minProfit, swapData)
+  const unsignedArbTx = await arbContract.populateTransaction.arb(minProfit, swapData)
   unsignedArbTx.type = 2
   unsignedArbTx.chainId = signedDepositTx.chainId
   unsignedArbTx.nonce = signedDepositTx.nonce + 1
