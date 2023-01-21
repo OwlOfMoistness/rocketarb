@@ -31,7 +31,6 @@ program.option('-r, --rpc <url>', 'RPC endpoint URL', 'http://localhost:8545')
        .option('-gm, --mint-gas-limit <gas>', 'gas limit for mint transaction (only relevant for --no-flash-loan)', 220000)
        .option('-ga, --approve-gas-limit <gas>', 'gas limit for approve transaction (only relevant for --no-flash-loan)', 80000)
        .option('-gs, --swap-gas-limit <gas>', 'gas limit for swap transaction (only relevant for --no-flash-loan)', 400000)
-       .option('-uv, --use-v2', 'use v2 contract for arbitrage')
 program.parse()
 const options = program.opts()
 
@@ -67,9 +66,6 @@ function checkOptions(resumeDeposit) {
   if ((options.maxFee || options.maxPrioFee) && resumeDeposit) {
     console.log(`Specified gas fees will apply to other transactions, but not the deposit resumed from ${options.bundleFile}`)
   }
-
-  if (options.useV2)
-    options.arbContract = 'to be inserted'
 }
 
 const randomSigner = ethers.Wallet.createRandom()

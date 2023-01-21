@@ -24,7 +24,7 @@ event Arbitrage:
   deposit: indexed(uint256)
   profit: uint256
 
-DEPOSIT_VALUE: constant(uint256) = 16_000_000_000_000_000_000
+DEPOSIT_VALUE: constant(uint256) = 32_000_000_000_000_000_000
 rocketStorage: immutable(RocketStorageInterface)
 rethToken: immutable(ERC20)
 wethToken: immutable(WethInterface)
@@ -82,9 +82,9 @@ def arb(wethAmount: uint256, minProfit: uint256, swapData: Bytes[MAX_DATA]):
   raw_call(swapRouter, swapData)
   assert rethToken.balanceOf(self) == 0, "rETH left over after swap"
   total: uint256 = wethToken.balanceOf(self)
-  assert total >= DEPOSIT_VALUE, "not enough to cover lent amount"
-  profit: uint256 = total - DEPOSIT_VALUE
+  assert total >= wethAmount, "not enough to cover lent amount"
+  profit: uint256 = total - wethAmount
   assert profit >= minProfit, "not enough profit"
   wethToken.withdraw(total)
   send(msg.sender, profit)
-  log Arbitrage(msg.sender, DEPOSIT_VALUE, profit)
+  log Arbitrage(msg.sender, wethAmount, profit)
